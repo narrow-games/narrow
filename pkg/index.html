@@ -1,0 +1,212 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Narrow</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;800&display=swap" rel="stylesheet">
+<style>
+:root{--acc:#35d07f;--tint:transparent;--tint2:transparent;--glow:255,255,255}
+*{box-sizing:border-box}html,body{height:100%;margin:0}
+body{background:#000;color:#fff;font-family:'Nunito',system-ui,'Segoe UI',sans-serif;font-weight:700;overflow:hidden;text-shadow:0 1px 6px #0006;
+ display:flex;flex-direction:column;padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}
+#bg{position:fixed;inset:-20px;width:calc(100% + 40px);height:calc(100% + 40px);object-fit:cover;filter:blur(5px) saturate(1.1);z-index:-3;opacity:0;transition:opacity 1.2s;background:#000}
+#bg.on{opacity:1}
+#tint{position:fixed;inset:0;z-index:-2;background:linear-gradient(var(--tint),var(--tint2));transition:background 2s}
+body[data-w=sunny]{--acc:#ffb62e;--tint:#ffd27a22;--tint2:#ff8a3d1c}
+body[data-w=night]{--acc:#7aa2ff;--tint:#050a2a88;--tint2:#0b0f3a66}
+body[data-w=cloudy]{--acc:#8fc3e6;--tint:#9fb4c533;--tint2:#5b6b7a33}
+body[data-w=rain]{--acc:#6fb3e8;--tint:#2a3f5a55;--tint2:#101d2e66}
+body[data-w=fog]{--acc:#b9cbd6;--tint:#c9d3d933;--tint2:#7b889044}
+body[data-w=snow]{--acc:#bfe6ff;--tint:#dff1ff22;--tint2:#7fa9c633}
+body[data-w=storm]{--acc:#b59bff;--tint:#1a1030aa;--tint2:#0a0a1a88}
+body.dusk{--tint:#ff7b4a33;--tint2:#7a2d6a44}
+body.dark #tint{box-shadow:inset 0 0 0 100vmax #00081a66}
+.glass{position:relative;background:linear-gradient(135deg,rgba(255,255,255,.30),rgba(255,255,255,.07) 60%,rgba(255,255,255,.14));
+ -webkit-backdrop-filter:blur(18px) saturate(1.9) brightness(1.08);backdrop-filter:blur(18px) saturate(1.9) brightness(1.08);
+ border:1px solid rgba(255,255,255,.38);box-shadow:inset 0 1.5px 1px rgba(255,255,255,.75),inset 0 -10px 18px rgba(255,255,255,.07),inset 0 0 0 1px rgba(255,255,255,.06),0 10px 30px rgba(0,20,40,.28);overflow:hidden}
+.glass:before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(circle 90px at var(--mx,30%) var(--my,0%),rgba(255,255,255,.45),transparent 70%);opacity:.55;transition:opacity .2s}
+.glass:hover:before{opacity:1}
+#ban{margin:14px 16px 0;border-radius:22px;height:20vh;min-height:84px;display:flex;align-items:center;justify-content:center}
+#ban img{transition:opacity .25s,transform .25s;max-width:92%;max-height:78%;object-fit:contain;position:relative;filter:drop-shadow(0 2px 6px #0008)}
+.bar{margin:10px 16px 0;border-radius:18px;display:flex;align-items:center;gap:10px;padding:6px 14px;font-size:13px}
+.bar .sp{flex:1}
+.chip,.bar button{border:0;color:#fff;font:800 12px 'Nunito',sans-serif;border-radius:12px;padding:3px 12px;cursor:pointer}
+.bar button{position:relative}
+.chip{background:var(--acc);color:#102030;text-shadow:none}
+.bat{width:22px;height:11px;border:2px solid #fff;border-radius:2px;position:relative}.bat:after{content:"";position:absolute;inset:1px;background:var(--acc)}
+#stage{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;min-height:0}
+#row{display:flex;gap:26px;padding:34px 44px;max-width:100%;overflow-x:auto;scrollbar-width:none;perspective:900px}#row::-webkit-scrollbar{display:none}
+.slot{flex:0 0 auto;width:clamp(96px,14vw,150px);aspect-ratio:1;border-radius:26px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;color:#ffffffaa;transition:transform .18s}
+.slot.has img{width:78%;height:78%;object-fit:cover;border-radius:18px;position:relative;box-shadow:0 4px 14px #0005}
+.slot.sel{transform:scale(1.14);box-shadow:inset 0 1.5px 1px #fffc,0 0 0 3px var(--acc),0 0 28px -2px var(--acc),0 12px 30px #0004}
+.slot.lnk:before{content:'↗';position:absolute;top:7px;right:10px;font-size:15px;z-index:2;text-shadow:0 1px 4px #0008;pointer-events:none}
+.slot.live:after{content:"";position:absolute;top:9px;right:9px;width:11px;height:11px;border-radius:50%;background:var(--acc);box-shadow:0 0 10px var(--acc)}
+.slot.spin{animation:spin 1s cubic-bezier(.5,0,.3,1) forwards}
+@keyframes spin{to{transform:rotateY(900deg) scale(1.5);opacity:.2}}
+#nm{font-size:16px;height:22px}
+.btns{display:flex;gap:12px}
+.btn{border:0;border-radius:26px;padding:11px 34px;color:#fff;font:800 15px 'Nunito',sans-serif;cursor:pointer;transition:transform .15s}
+.btn:hover:not(:disabled){transform:scale(1.06)}.btn:active:not(:disabled){transform:scale(.97)}
+#play{background:linear-gradient(135deg,color-mix(in srgb,var(--acc) 70%,transparent),color-mix(in srgb,var(--acc) 25%,transparent))}
+.btn:disabled{opacity:.45;cursor:default}
+#quit{display:none}#quit.show{display:block}
+#logo{position:fixed;left:16px;bottom:calc(12px + env(safe-area-inset-bottom,0px));height:34px;opacity:.85;z-index:5;filter:drop-shadow(0 1px 4px #0008)}
+#boot{position:fixed;inset:0;z-index:30;background:#000;display:flex;align-items:center;justify-content:center;transition:opacity 1.1s}
+#boot.hide{opacity:0;pointer-events:none}
+#sv{width:min(170px,38vw);opacity:0;transition:opacity .7s;background:#000}#sv.on{opacity:1}
+#hint{position:absolute;bottom:8vh;font-size:12px;color:#fff5;display:none;text-shadow:none}
+#black{position:fixed;inset:0;z-index:35;background:#000;opacity:0;pointer-events:none;transition:opacity .7s}#black.on{opacity:1;pointer-events:all}
+#game{position:fixed;inset:0;z-index:40;background:#000;display:none;color:#888;align-items:center;justify-content:center}
+#game.show{display:flex}#game iframe{position:absolute;inset:0;width:100%;height:100%;border:0;opacity:0;transition:opacity .5s}#game iframe.on{opacity:1}
+#home{position:absolute;top:6px;left:6px;z-index:3;opacity:.4;border:0;border-radius:10px;padding:4px 10px;background:#222;color:#fff;font:800 12px 'Nunito',sans-serif;cursor:pointer}#home:hover,#tab:hover{opacity:1}#tab{position:absolute;top:6px;left:90px;z-index:3;opacity:.4;border:0;border-radius:10px;padding:4px 10px;background:#222;color:#fff;font:800 12px 'Nunito',sans-serif;cursor:pointer}
+#toast{position:absolute;top:14px;left:50%;transform:translateX(-50%);z-index:4;padding:8px 18px;border-radius:16px;font-size:13px;opacity:0;transition:opacity .5s;pointer-events:none}
+.slot.holding{animation:holdr .65s linear}@keyframes holdr{from{box-shadow:inset 0 0 0 0 var(--acc)}to{box-shadow:inset 0 0 0 6px var(--acc),0 0 26px var(--acc)}}
+#lib{position:fixed;inset:0;z-index:45;background:#0008;display:none;align-items:center;justify-content:center;padding:16px}#lib.show{display:flex}
+.panel{border-radius:24px;padding:18px;width:min(720px,100%);max-height:86vh;display:flex;flex-direction:column;gap:10px}
+.lh{display:flex;align-items:center;gap:10px}.lh h2{margin:0;font-size:20px}.lh .sp{flex:1}.lh .btn{padding:7px 14px;font-size:13px}
+#lq{padding:10px 14px;border-radius:14px;border:1px solid #fff6;background:#ffffff26;color:#fff;font:700 14px 'Nunito',sans-serif;outline:0;position:relative}#lq::placeholder{color:#fffa}
+#ll{overflow:auto;display:flex;flex-direction:column;gap:6px;min-height:120px;position:relative}
+.rom{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:14px;background:#ffffff1c;cursor:pointer;border:1px solid transparent}.rom:hover{background:#ffffff38;border-color:#fff6}
+.rom b{font-size:10px;background:var(--acc);color:#102030;border-radius:8px;padding:2px 8px;text-shadow:none;min-width:52px;text-align:center}
+#ln{margin:0;font-size:12px;opacity:.85}
+#modal{position:fixed;inset:0;z-index:50;background:#0007;display:none;align-items:center;justify-content:center;padding:16px}#modal.show{display:flex}
+.card{border-radius:22px;padding:22px;width:min(360px,100%);display:flex;flex-direction:column;gap:10px}
+.card h2{margin:0;font-size:18px}.card p{margin:0;font-size:12px;opacity:.8}
+.card input{position:relative;padding:10px;border-radius:12px;border:1px solid #fff6;background:#ffffff26;color:#fff;font:700 14px 'Nunito',sans-serif;outline:0}.card input::placeholder{color:#ffffffaa}
+.card .row{display:flex;gap:8px}.card .btn{flex:1;padding:10px}
+#err{color:#ffb3a8;font-size:12px;min-height:14px}
+</style></head><body>
+<video id="bg" muted loop playsinline></video><div id="tint"></div>
+<div id="ban" class="glass"><img id="bimg" src="assets/banner.webp" alt=""></div>
+<div class="bar glass"><span id="wx">…</span><span class="chip" id="who">Guest</span><span class="sp"></span><button class="glass" id="acct">⚙ Account</button><button class="glass" id="mus">♪ on</button><span id="clk"></span><div class="bat"></div></div>
+<div id="stage"><div id="row"></div><div id="nm"></div><div class="btns"><button class="btn glass" id="play">▶ Play</button><button class="btn glass" id="quit">⏹ Quit game</button></div></div>
+<img id="logo" alt="Narrow" src="assets/narrow.png">
+<div id="boot"><video id="sv" src="assets/startup.mp4" playsinline preload="auto"></video><div id="hint">press any key</div></div>
+<div id="black"></div>
+<div id="game"><button id="home">☰ Menu</button><button id="tab" style="display:none">↗ Open in tab</button><div id="toast" class="glass">F1 or hold Esc: Narrow menu</div><span id="ld">Loading…</span></div>
+<div id="modal"><div class="card glass" id="card"></div></div>
+<div id="lib"><div class="panel glass"><div class="lh"><h2>My Games</h2><span id="lc"></span><span class="sp"></span><button class="btn glass" id="lpick">📁 Choose folder / USB</button><button class="btn glass" id="lx">✕</button></div>
+<input id="lq" placeholder="Search…"><div id="ll"></div><p id="ln">Pick a folder on your USB (or anywhere). Games are detected automatically by file type. Use games you own.</p></div></div>
+<input type="file" id="fin" webkitdirectory multiple style="display:none">
+<audio id="a1" src="assets/music1.mp3" preload="auto"></audio><audio id="a2" src="assets/music2.mp3" preload="auto"></audio><audio id="a3" src="assets/music_cloudy.mp3" preload="auto"></audio>
+<audio id="ck" src="assets/click.mp3" preload="auto"></audio><audio id="sl" src="assets/select.mp3" preload="auto"></audio>
+<script>
+const $=id=>document.getElementById(id);
+const GAMES=[
+ {name:'Google',type:'embed',img:'assets/google-slot.png',url:'https://www.google.com/webhp?igu=1',banner:'assets/google-slot.png',bscale:.8},
+ {name:'My Games',type:'rom',img:'assets/roms-slot.svg',banner:'assets/roms-banner.svg'},
+ {name:'Eaglercraft',img:'assets/eagler-slot.png',url:'game/eaglercraft.html',banner:'assets/banner.webp'},
+ {name:'2048',img:'assets/2048-slot.png',url:'game/2048.html',banner:'assets/2048-banner.svg'}];
+const N=8;let sel=0,musicOn=true,busy=false,inGame=false,sess=null,vol=.4,cloudy=false,li=0;
+document.addEventListener('pointermove',e=>{const g=e.target.closest&&e.target.closest('.glass');if(g){const r=g.getBoundingClientRect();g.style.setProperty('--mx',(e.clientX-r.left)+'px');g.style.setProperty('--my',(e.clientY-r.top)+'px')}});
+/* ---------- audio ---------- */
+const A=[$('a1'),$('a2'),$('a3')];const setVol=v=>{vol=v;A.forEach(t=>t.volume=v)};setVol(.4);
+const list=()=>cloudy?[A[2]]:[A[0],A[1]];
+A.forEach(t=>t.onended=()=>{const l=list();li=(li+1)%l.length;l[li].currentTime=0;play()});
+function play(){if(!musicOn)return;const l=list();const t=l[li%l.length];t.play().catch(()=>{const f=()=>{play();removeEventListener('pointerdown',f);removeEventListener('keydown',f)};addEventListener('pointerdown',f);addEventListener('keydown',f)})}
+function stopMusic(){A.forEach(t=>t.pause())}
+function fade(to,ms,cb){const from=vol,t0=performance.now();(function f(n){const k=Math.min(1,(n-t0)/ms);setVol(from+(to-from)*k);k<1?requestAnimationFrame(f):cb&&cb()})(t0)}
+function snd(id){const a=$(id);try{a.currentTime=0;a.volume=1;a.play().catch(()=>{})}catch(e){}}
+$('mus').onclick=()=>{musicOn=!musicOn;$('mus').textContent='♪ '+(musicOn?'on':'off');musicOn?play():stopMusic()};
+/* ---------- weather + time ---------- */
+const VID={sunny:'sunny',night:'night',cloudy:'cloudy',rain:'rain',fog:'fog',snow:'snow',storm:'thunderstorm',nstorm:'night_thunderstorm'};
+const LABEL={sunny:['☀','Sunny'],night:['☾','Clear night'],cloudy:['☁','Cloudy'],rain:['🌧','Rain'],fog:['🌫','Fog'],snow:['❄','Snow'],storm:['⛈','Thunderstorm']};
+function cond(code){if(code<=1)return'clear';if(code<=3)return'cloudy';if(code<=48)return'fog';if(code<=67)return'rain';if(code<=77)return'snow';if(code<=82)return'rain';if(code<=86)return'snow';return'storm'}
+function applyWx(c,isDay,temp){let key=c==='clear'?(isDay?'sunny':'night'):c==='cloudy'?(isDay?'cloudy':'night'):c;
+ let file=VID[key];if(c==='storm')file=isDay?VID.storm:VID.nstorm;
+ const lbl=LABEL[c==='clear'?key:c==='cloudy'&&isDay?'cloudy':c==='cloudy'?'night':c];
+ document.body.dataset.w=c==='storm'?'storm':key;document.body.classList.toggle('dark',!isDay&&!['sunny','night'].includes(key)&&c!=='storm');
+ const h=new Date().getHours();document.body.classList.toggle('dusk',isDay&&(h<8||h>=17));
+ cloudy=(c==='cloudy'&&isDay);$('wx').textContent=lbl[0]+' '+lbl[1]+(temp!=null?'  '+Math.round(temp)+'°C':'');
+ const bg=$('bg'),src='assets/weather/'+file+'.mp4';if(!bg.src.endsWith(src)){bg.classList.remove('on');setTimeout(()=>{bg.src=src;bg.play().catch(()=>{})},bg.src?600:0)}}
+$('bg').addEventListener('canplay',()=>$('bg').classList.add('on'));
+async function weather(){const forced=location.hash.slice(1);
+ const m={sunny:['clear',1],night:['clear',0],cloudy:['cloudy',1],rain:['rain',1],fog:['fog',1],snow:['snow',1],storm:['storm',1],nstorm:['storm',0]};
+ if(m[forced]){applyWx(m[forced][0],m[forced][1],null);return}
+ const h=new Date().getHours(),day=h>=7&&h<19;applyWx('clear',day,null);
+ const go=async(la,lo)=>{try{const r=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${la}&longitude=${lo}&current=temperature_2m,weather_code,is_day`);const j=(await r.json()).current;applyWx(cond(j.weather_code),!!j.is_day,j.temperature_2m)}catch(e){}};
+ if(navigator.geolocation)navigator.geolocation.getCurrentPosition(p=>go(p.coords.latitude,p.coords.longitude),()=>go(43.04,-80.88),{timeout:6000});else go(43.04,-80.88)}
+weather();setInterval(weather,15*60*1000);addEventListener('hashchange',weather);
+/* ---------- slots ---------- */
+const row=$('row'),hold={t:0,fired:false};
+for(let i=0;i<N;i++){const g=GAMES[i],s=document.createElement('div');s.className='slot glass'+(g?' has':'')+(g&&g.type==='link'?' lnk':'');
+ if(g){const im=new Image();im.src=g.img;im.alt=g.name;s.appendChild(im)}else s.textContent='Empty';
+ s.onclick=()=>{if(hold.fired){hold.fired=false;return}if(busy)return;if(i===sel&&GAMES[i])launch();else pick(i)};
+ if(g&&g.type==='rom'){s.onpointerdown=()=>{hold.fired=false;s.classList.add('holding');hold.t=setTimeout(()=>{hold.fired=true;s.classList.remove('holding');pickSource()},650)};
+  ['onpointerup','onpointerleave','onpointercancel'].forEach(k=>s[k]=()=>{clearTimeout(hold.t);s.classList.remove('holding')})}
+ row.appendChild(s)}
+function ui(){const g=GAMES[sel];$('nm').textContent=g?g.name+(sess&&sess.i===sel?' (in progress'+(sess.rom?': '+sess.rom:'')+')':g.type==='rom'?' — hold click to choose a folder/USB':''):'Empty slot';$('play').disabled=!g;$('play').textContent=g&&g.type==='link'?'↗ Open':g&&g.type==='rom'&&!(sess&&sess.i===sel)?'▤ Library':sess&&sess.i===sel?'▶ Resume':'▶ Play';
+ const bi=$('bimg');bi.style.opacity=0;setTimeout(()=>{bi.src=g?g.banner:'assets/narrow.png';bi.style.transform='scale('+((g&&g.bscale)||1)+')';bi.style.opacity=1},200);$('quit').classList.toggle('show',!!sess);[...row.children].forEach((c,k)=>{c.classList.toggle('sel',k===sel);c.classList.toggle('live',!!sess&&sess.i===k)})}
+function pick(i,quiet){if(i<0||i>=N)return;if(i!==sel&&!quiet)snd('ck');sel=i;ui();row.children[sel].scrollIntoView({inline:'center',block:'nearest',behavior:'smooth'})}
+pick(0,true);
+addEventListener('keydown',e=>{if(busy||inGame||$('modal').classList.contains('show')||!$('boot').classList.contains('hide'))return;
+ if(e.key==='ArrowRight')pick(sel+1);else if(e.key==='ArrowLeft')pick(sel-1);else if(e.key==='Enter'&&GAMES[sel])launch()});
+$('play').onclick=()=>{if(!busy&&GAMES[sel])launch()};
+/* ---------- launch / pause / resume ---------- */
+function launch(){const g0=GAMES[sel];if(g0.type==='rom'&&!(sess&&sess.i===sel)){openLib();return}busy=true;const i=sel,g=GAMES[i];snd('sl');row.children[i].classList.add('spin');
+ if(g.type==='link'){setTimeout(()=>{window.open(g.url,'_blank','noopener');},900);setTimeout(()=>{row.children[i].classList.remove('spin');busy=false},1300);return}
+ fade(0,1200,stopMusic);setTimeout(()=>$('black').classList.add('on'),900);
+ setTimeout(()=>{const gm=$('game');gm.classList.add('show');inGame=true;toast(g);$('tab').style.display=g.type==='embed'?'':'none';
+  if(sess&&sess.i===i){sess.f.classList.add('on');try{sess.f.focus();sess.f.contentWindow.focus()}catch(e){}return}
+  $('ld').style.display='';const f=document.createElement('iframe');f.allow='fullscreen; autoplay; pointer-lock; keyboard-map; clipboard-read; clipboard-write';
+  f.onload=()=>{$('ld').style.display='none';f.classList.add('on');f.focus()};f.src=g.url;gm.appendChild(f);sess={i,f};
+  sess.ht=setInterval(()=>{try{hook(f.contentWindow)}catch(e){}},250)},1700)}
+function toast(g){const t=$('toast');t.textContent=g&&g.type==='embed'?'Use ☰ Menu (top-left) to return':'F1 or hold Esc: Narrow menu';t.style.opacity=1;setTimeout(()=>t.style.opacity=0,4500)}
+function openMenu(){if(!inGame||!sess)return;inGame=false;busy=true;
+ try{sess.f.contentDocument.exitPointerLock()}catch(e){}try{document.exitPointerLock()}catch(e){}
+ $('black').classList.add('on');
+ setTimeout(()=>{$('game').classList.remove('show');row.children[sess.i].classList.remove('spin');sel=sess.i;ui();setVol(0);
+  $('black').classList.remove('on');play();fade(.4,1500);busy=false},750)}
+$('home').onclick=openMenu;$('tab').onclick=()=>{if(sess)window.open(GAMES[sess.i].url,'_blank','noopener')};
+$('quit').onclick=()=>{if(!sess||!confirm('Quit the game? Unsaved progress is lost.'))return;clearInterval(sess.ht);sess.f.remove();sess=null;ui()};
+let escT=null;
+function key(e){if(!inGame)return;
+ if(e.type==='keydown'){if(e.key==='F1'){e.preventDefault();e.stopImmediatePropagation();openMenu()}
+  else if(e.key==='Escape'&&!e.repeat&&!escT)escT=setTimeout(()=>{escT=null;openMenu()},650)}
+ else if(e.key==='Escape'){clearTimeout(escT);escT=null}}
+function hook(w){['keydown','keyup'].forEach(t=>{w.addEventListener(t,key,true);w.document.addEventListener(t,key,true)})}
+/* hook() is idempotent: re-adding the same listener is a no-op, so it is safe to call repeatedly */
+['keydown','keyup'].forEach(t=>addEventListener(t,key,true));
+/* ---------- ROM library (folder/USB picker + EmulatorJS) ---------- */
+const SYS={nes:['nes','NES'],fds:['nes','NES'],smc:['snes','SNES'],sfc:['snes','SNES'],gb:['gb','Game Boy'],gbc:['gb','GB Color'],gba:['gba','GBA'],n64:['n64','N64'],z64:['n64','N64'],v64:['n64','N64'],nds:['nds','DS'],md:['segaMD','Genesis'],gen:['segaMD','Genesis'],smd:['segaMD','Genesis'],sms:['segaMS','Master Sys'],gg:['segaGG','Game Gear'],a26:['atari2600','Atari 2600'],pce:['pce','PC Engine']};
+let roms=[],rootH=null,libLoaded=false,needPerm=false;
+const romIdx=GAMES.findIndex(g=>g.type==='rom');
+const idb=()=>new Promise((res,rej)=>{const r=indexedDB.open('narrow',1);r.onupgradeneeded=()=>r.result.createObjectStore('kv');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)});
+async function kvGet(k){try{const d=await idb();return await new Promise(r=>{const q=d.transaction('kv').objectStore('kv').get(k);q.onsuccess=()=>r(q.result);q.onerror=()=>r(null)})}catch(e){return null}}
+async function kvSet(k,v){try{const d=await idb();d.transaction('kv','readwrite').objectStore('kv').put(v,k)}catch(e){}}
+const clean=n=>n.replace(/\.[^.]+$/,'').replace(/_/g,' ').replace(/\s*[\(\[][^\)\]]*[\)\]]/g,'').trim()||n;
+async function walk(h,depth){if(depth>4||roms.length>3000)return;for await(const [n,e] of h.entries()){if(n[0]==='.'||n==='System Volume Information'||n==='$RECYCLE.BIN')continue;
+ if(e.kind==='directory')await walk(e,depth+1);else{const x=n.split('.').pop().toLowerCase(),s=SYS[x];if(s)roms.push({name:clean(n),core:s[0],sys:s[1],h:e})}}}
+async function rescan(){roms=[];$('ln').textContent='Scanning…';try{await walk(rootH,0)}catch(e){}roms.sort((a,b)=>a.name.localeCompare(b.name));needPerm=false}
+async function pickSource(){if(window.showDirectoryPicker){try{rootH=await showDirectoryPicker({mode:'read'});kvSet('root',rootH);libLoaded=true;await rescan();openLib()}catch(e){}}else $('fin').click()}
+$('fin').onchange=e=>{roms=[...e.target.files].filter(f=>SYS[f.name.split('.').pop().toLowerCase()]).map(f=>{const s=SYS[f.name.split('.').pop().toLowerCase()];return{name:clean(f.name),core:s[0],sys:s[1],file:f}}).sort((a,b)=>a.name.localeCompare(b.name));libLoaded=true;openLib()};
+async function openLib(){$('lib').classList.add('show');if(!libLoaded){libLoaded=true;const h=await kvGet('root');if(h){rootH=h;try{if(await h.queryPermission({mode:'read'})==='granted')await rescan();else needPerm=true}catch(e){needPerm=true}}}renderLib()}
+function closeLib(){$('lib').classList.remove('show')}
+function renderLib(){const q=$('lq').value.toLowerCase(),l=$('ll');l.innerHTML='';const v=roms.filter(r=>r.name.toLowerCase().includes(q));$('lc').textContent=roms.length?roms.length+' games':'';
+ v.slice(0,400).forEach(r=>{const d=document.createElement('div');d.className='rom';d.innerHTML='<b></b><span></span>';d.firstChild.textContent=r.sys;d.lastChild.textContent=r.name;d.onclick=()=>playRom(r);l.appendChild(d)});
+ $('ln').textContent=needPerm?'Reconnect to your saved folder to see your games.':roms.length?(v.length?'':'No matches.'):'No games found yet. Pick a folder on your USB (or anywhere). Games are detected automatically by file type. Use games you own.';
+ if(needPerm){const b=document.createElement('button');b.className='btn glass';b.textContent='Reconnect saved folder';b.onclick=async()=>{try{if(await rootH.requestPermission({mode:'read'})==='granted'){await rescan();renderLib()}}catch(e){}};l.appendChild(b)}}
+$('lq').oninput=renderLib;$('lpick').onclick=pickSource;$('lx').onclick=closeLib;
+addEventListener('keydown',e=>{if(e.key==='Escape'&&$('lib').classList.contains('show')){e.stopPropagation();closeLib()}},true);
+async function playRom(r){if(sess&&!confirm('This closes the game in progress. Continue?'))return;closeLib();
+ if(sess){clearInterval(sess.ht);sess.f.remove();sess=null}
+ let url;try{url=URL.createObjectURL(r.file||await r.h.getFile())}catch(e){alert('Could not read that file.');return}
+ busy=true;snd('sl');row.children[romIdx].classList.add('spin');fade(0,1200,stopMusic);setTimeout(()=>$('black').classList.add('on'),900);
+ setTimeout(()=>{const gm=$('game');gm.classList.add('show');inGame=true;toast({});$('tab').style.display='none';$('ld').style.display='';
+  const f=document.createElement('iframe');f.allow='fullscreen; autoplay; gamepad; pointer-lock; keyboard-map';
+  f.srcdoc=`<!DOCTYPE html><html><body style="margin:0;background:#000;height:100vh"><div id="game" style="width:100%;height:100%"></div><script>EJS_player='#game';EJS_core=${JSON.stringify(r.core)};EJS_gameUrl=${JSON.stringify(url)};EJS_gameName=${JSON.stringify(r.name)};EJS_pathtodata='https://cdn.emulatorjs.org/stable/data/';EJS_startOnLoaded=true;<\/script><script src="https://cdn.emulatorjs.org/stable/data/loader.js"><\/script></body></html>`;
+  f.onload=()=>{$('ld').style.display='none';f.classList.add('on');f.focus()};gm.appendChild(f);sess={i:romIdx,f,rom:r.name};
+  sess.ht=setInterval(()=>{try{hook(f.contentWindow)}catch(e){}},250)},1700)}
+/* ---------- misc ---------- */
+function clock(){const d=new Date();$('clk').textContent=d.toLocaleDateString('en',{month:'numeric',day:'numeric',weekday:'short'})+'  '+d.toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit',hour12:false})}clock();setInterval(clock,20000);
+let acc=null;try{acc=JSON.parse(localStorage.getItem('narrow_acct')||'null')}catch(e){}
+function who(){$('who').textContent=acc?acc.name:'Guest'}who();
+async function sha(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+function setup(){$('card').innerHTML=`<h2>${acc?'Your Account':'Set up your account'}</h2><p>Saved on this device only for now.</p><input id="n" placeholder="Username" value="${acc?acc.name:''}"><input id="em" type="email" placeholder="Email" value="${acc?acc.email:''}"><input id="pw" type="password" placeholder="Password"><div id="err"></div><div class="row"><button class="btn glass" id="cx">${acc?'Close':'Skip'}</button><button class="btn glass" id="sv2">Save</button></div>`;$('modal').classList.add('show');
+ $('cx').onclick=()=>$('modal').classList.remove('show');
+ $('sv2').onclick=async()=>{const n=$('n').value.trim(),e=$('em').value.trim(),p=$('pw').value;if(!n||!/^\S+@\S+\.\S+$/.test(e)||p.length<6){$('err').textContent='Enter a name, valid email and 6+ char password.';return}
+ acc={name:n,email:e,h:await sha(p)};try{localStorage.setItem('narrow_acct',JSON.stringify(acc))}catch(x){}who();$('modal').classList.remove('show')}}
+$('acct').onclick=setup;$('who').onclick=setup;
+/* ---------- boot: 1s black -> logo video -> fade into home ---------- */
+const sv=$('sv');let done=false;
+function fin(){if(done)return;done=true;sv.classList.remove('on');setTimeout(()=>{$('boot').classList.add('hide');play();if(!acc)setTimeout(setup,1400)},700)}
+function start(){sv.classList.add('on');sv.play().then(()=>{},()=>{$('hint').style.display='block';const f=()=>{$('hint').style.display='none';sv.play().catch(fin);removeEventListener('pointerdown',f);removeEventListener('keydown',f)};addEventListener('pointerdown',f);addEventListener('keydown',f)})}
+sv.onended=fin;sv.onerror=fin;setTimeout(start,1000);
+</script></body></html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>2048</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html,body{height:100%;margin:0}
+body{background:radial-gradient(circle at 30% 0,#3a3128,#16181a);color:#f6efe6;font-family:'Nunito','Segoe UI',system-ui,sans-serif;font-weight:800;display:flex;align-items:center;justify-content:center;overflow:hidden;user-select:none;touch-action:none}
+#app{width:min(94vw,86vh,520px)}
+.top{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+h1{margin:0;font-size:clamp(34px,9vmin,54px);color:#ffa800;flex:1;line-height:1}
+.box{background:#ffffff14;border:1px solid #ffffff30;border-radius:12px;padding:5px 14px;text-align:center;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#d8cbb8;min-width:70px}
+.box b{display:block;font-size:20px;color:#fff;letter-spacing:0}
+button{border:0;border-radius:12px;padding:10px 16px;background:#ffa800;color:#fff;font:800 14px 'Nunito',sans-serif;cursor:pointer}
+button:hover{filter:brightness(1.1)}
+#board{position:relative;width:100%;aspect-ratio:1;background:#4a4036;border-radius:14px;box-shadow:0 10px 30px #0006}
+.bg,.tile{position:absolute;border-radius:8px}
+.bg{background:#ffffff14}
+.tile{display:flex;align-items:center;justify-content:center;font-weight:800;transition:transform .12s ease-in-out;will-change:transform}
+.tile.new{animation:pop .2s .1s backwards}.tile.merge{animation:pop .2s}
+@keyframes pop{0%{scale:.2;opacity:.3}60%{scale:1.15}100%{scale:1;opacity:1}}
+#msg{position:absolute;inset:0;border-radius:14px;background:#1a1612cc;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;font-size:clamp(26px,7vmin,40px);text-align:center;z-index:5;backdrop-filter:blur(3px)}
+#msg.show{display:flex}#msg small{font-size:14px;color:#d8cbb8;font-weight:600}
+.hint{margin-top:12px;font-size:12px;color:#b9ab98;text-align:center;font-weight:600}
+</style></head><body>
+<div id="app"><div class="top"><h1>2048</h1><div class="box">Score<b id="sc">0</b></div><div class="box">Best<b id="bs">0</b></div><button id="nw">New</button></div>
+<div id="board"><div id="msg"><div id="mt"></div><small id="ms"></small><button id="mb"></button></div></div>
+<div class="hint">Arrow keys / WASD or swipe. Merge tiles to reach 2048.</div></div>
+<script>
+const $=id=>document.getElementById(id),B=$('board'),N=4;
+const COL={2:['#eee4da','#776e65'],4:['#ede0c8','#776e65'],8:['#f2b179','#fff'],16:['#f59563','#fff'],32:['#f67c5f','#fff'],64:['#f65e3b','#fff'],128:['#edcf72','#fff'],256:['#edcc61','#fff'],512:['#edc850','#fff'],1024:['#edc53f','#fff'],2048:['#edc22e','#fff']};
+let tiles,score,best=0,won,over,id=0,busy;
+try{best=+localStorage.getItem('n2048best')||0}catch(e){}
+for(let i=0;i<16;i++){const d=document.createElement('div');d.className='bg';d.dataset.i=i;B.appendChild(d)}
+function geo(){const u=B.clientWidth,g=u*.03,t=(u-5*g)/4;return{g,t,pos:(k)=>g+k*(t+g)}}
+function place(t){const G=geo();t.el.style.width=t.el.style.height=G.t+'px';t.el.style.transform=`translate(${G.pos(t.c)}px,${G.pos(t.r)}px)`;t.el.style.fontSize=(G.t*(t.v>=1024?.34:t.v>=128?.4:.5))+'px'}
+function paint(t){const c=COL[t.v]||['#3c3a32','#fff'];t.el.style.background=c[0];t.el.style.color=c[1];t.el.textContent=t.v;place(t)}
+function layoutBg(){const G=geo();[...B.querySelectorAll('.bg')].forEach(d=>{const i=+d.dataset.i;d.style.width=d.style.height=G.t+'px';d.style.transform=`translate(${G.pos(i%N)}px,${G.pos(Math.floor(i/N))}px)`})}
+function mk(r,c,v,isNew){const el=document.createElement('div');el.className='tile'+(isNew?' new':'');const t={id:++id,r,c,v,el};B.appendChild(el);paint(t);tiles.push(t);return t}
+function empties(){const o=new Set(tiles.map(t=>t.r*N+t.c)),a=[];for(let i=0;i<16;i++)if(!o.has(i))a.push(i);return a}
+function spawn(){const e=empties();if(!e.length)return;const i=e[Math.floor(Math.random()*e.length)];mk(Math.floor(i/N),i%N,Math.random()<.9?2:4,true)}
+function setScore(){$('sc').textContent=score;if(score>best){best=score;try{localStorage.setItem('n2048best',best)}catch(e){}}$('bs').textContent=best}
+function reset(){B.querySelectorAll('.tile').forEach(e=>e.remove());tiles=[];score=0;won=false;over=false;busy=false;$('msg').classList.remove('show');setScore();spawn();spawn()}
+function move(dir){if(busy||over)return;
+ const dr=[0,0,-1,1][dir],dc=[-1,1,0,0][dir]; /* 0 left 1 right 2 up 3 down */
+ let moved=false;const dead=[];
+ for(let k=0;k<N;k++){
+  const coords=[];for(let j=0;j<N;j++){coords.push(dir<2?[k,dir===0?j:N-1-j]:[dir===2?j:N-1-j,k])}
+  const line=coords.map(([r,c])=>tiles.find(t=>t.r===r&&t.c===c)).filter(Boolean);
+  const out=[];
+  for(const t of line){const l=out[out.length-1];if(l&&l.v===t.v&&!l.m){l.v*=2;l.m=true;score+=l.v;dead.push([t,l]);if(l.v===2048)won=won||'new'}else out.push(t)}
+  out.forEach((t,j)=>{const [r,c]=coords[j];if(t.r!==r||t.c!==c)moved=true;t.r=r;t.c=c});
+  dead.forEach(([t,l])=>{if(t.r!==l.r||t.c!==l.c){t.r=l.r;t.c=l.c}})}
+ if(!dead.length&&!moved)return;
+ busy=true;tiles.forEach(place);
+ setTimeout(()=>{dead.forEach(([t])=>{t.el.remove();tiles.splice(tiles.indexOf(t),1)});
+  tiles.forEach(t=>{if(t.m){t.m=false;paint(t);t.el.classList.remove('merge');void t.el.offsetWidth;t.el.classList.add('merge')}});
+  spawn();setScore();busy=false;
+  if(won==='new'){won=true;show('You made 2048!','Keep going for a higher score.','Continue',()=>$('msg').classList.remove('show'))}
+  else if(!canMove()){over=true;show('Game over','Final score '+score,'Try again',reset)}},130)}
+function canMove(){if(empties().length)return true;for(const t of tiles)for(const o of tiles)if(t.v===o.v&&Math.abs(t.r-o.r)+Math.abs(t.c-o.c)===1)return true;return false}
+function show(a,b,c,fn){$('mt').textContent=a;$('ms').textContent=b;$('mb').textContent=c;$('mb').onclick=fn;$('msg').classList.add('show')}
+const KEYS={ArrowLeft:0,a:0,A:0,ArrowRight:1,d:1,D:1,ArrowUp:2,w:2,W:2,ArrowDown:3,s:3,S:3};
+addEventListener('keydown',e=>{if(e.key in KEYS){e.preventDefault();move(KEYS[e.key])}});
+let sx,sy;addEventListener('pointerdown',e=>{sx=e.clientX;sy=e.clientY});
+addEventListener('pointerup',e=>{if(sx==null)return;const dx=e.clientX-sx,dy=e.clientY-sy;sx=null;if(Math.max(Math.abs(dx),Math.abs(dy))<30)return;move(Math.abs(dx)>Math.abs(dy)?(dx<0?0:1):(dy<0?2:3))});
+$('nw').onclick=reset;
+addEventListener('resize',()=>{layoutBg();tiles.forEach(place)});
+layoutBg();reset();
+</script></body></html>
