@@ -122,7 +122,7 @@ const GAMES=[
  {name:'My Games',type:'rom',img:'assets/roms-slot.svg',banner:'assets/roms-banner.svg'},
  {name:'Eaglercraft',img:'assets/eagler-slot.png',url:'game/eaglercraft.html',banner:'assets/banner.webp'},
  {name:'2048',img:'assets/2048-slot.png',url:'game/2048.html',banner:'assets/2048-banner.svg'},
- {name:'Sandboxels',type:'link',img:'assets/sandboxels-slot.png',url:'https://sandboxels.r74n.com/',banner:'assets/sandboxels-banner.webp'}];
+ {name:'Sandboxels',type:'link',img:'assets/sandboxels-banner.webp',fit:'contain',url:'https://sandboxels.r74n.com/',banner:'assets/sandboxels-slot.png'}];
 const N=8;let sel=0,musicOn=true,busy=false,inGame=false,sess=null,vol=.4,li=0;
 document.addEventListener('pointermove',e=>{const g=e.target.closest&&e.target.closest('.glass');if(g){const r=g.getBoundingClientRect();g.style.setProperty('--mx',(e.clientX-r.left)+'px');g.style.setProperty('--my',(e.clientY-r.top)+'px')}});
 /* ---------- audio ---------- */
@@ -156,7 +156,7 @@ weather();setInterval(weather,15*60*1000);addEventListener('hashchange',weather)
 /* ---------- slots ---------- */
 const row=$('row'),hold={t:0,fired:false};
 for(let i=0;i<N;i++){const g=GAMES[i],s=document.createElement('div');s.className='slot glass'+(g?' has':'')+(g&&g.type==='link'?' lnk':'');
- const im=new Image();im.src=g?g.img:'assets/narrow.png';im.alt=g?g.name:'';if(!g)im.className='ghost';s.appendChild(im);const lb=document.createElement('span');lb.className='lb';lb.textContent=g?g.name:'Empty';s.appendChild(lb);
+ const im=new Image();im.src=g?g.img:'assets/narrow.png';im.alt=g?g.name:'';if(!g)im.className='ghost';if(g&&g.fit)Object.assign(im.style,{objectFit:g.fit,width:'90%',height:'46%',boxShadow:'none',borderRadius:'0'});s.appendChild(im);const lb=document.createElement('span');lb.className='lb';lb.textContent=g?g.name:'Empty';s.appendChild(lb);
  s.onclick=()=>{if(hold.fired){hold.fired=false;return}if(busy)return;if(i===sel&&GAMES[i])launch();else pick(i)};
  if(g&&g.type==='rom'){s.onpointerdown=()=>{hold.fired=false;s.classList.add('holding');hold.t=setTimeout(()=>{hold.fired=true;s.classList.remove('holding');pickSource()},650)};
   ['onpointerup','onpointerleave','onpointercancel'].forEach(k=>s[k]=()=>{clearTimeout(hold.t);s.classList.remove('holding')})}
