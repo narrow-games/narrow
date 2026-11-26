@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><link rel="icon" type="image/png" href="favicon.png"><meta charset="utf-8"><title>Narrow</title>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><title>Narrow</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;800&display=swap" rel="stylesheet">
 <style>
@@ -60,7 +60,7 @@ body.dark #tint{box-shadow:inset 0 0 0 100vmax #00081a66}
 #home{position:absolute;top:6px;left:6px;z-index:3;opacity:.4;border:0;border-radius:10px;padding:4px 10px;background:#222;color:#fff;font:800 12px 'Nunito',sans-serif;cursor:pointer}#home:hover,#tab:hover{opacity:1}#tab{position:absolute;top:6px;left:90px;z-index:3;opacity:.4;border:0;border-radius:10px;padding:4px 10px;background:#222;color:#fff;font:800 12px 'Nunito',sans-serif;cursor:pointer}
 #toast{position:absolute;top:14px;left:50%;transform:translateX(-50%);z-index:4;padding:8px 18px;border-radius:16px;font-size:13px;opacity:0;transition:opacity .5s;pointer-events:none}
 .slot.holding{animation:holdr .65s linear}@keyframes holdr{from{box-shadow:inset 0 0 0 0 var(--acc)}to{box-shadow:inset 0 0 0 6px var(--acc),0 0 26px var(--acc)}}
-#lib{position:fixed;inset:0;z-index:45;background:#0008;display:none;align-items:center;justify-content:center;padding:16px}#lib.show{display:flex}
+#lib,#store{position:fixed;inset:0;z-index:45;background:#0008;display:none;align-items:center;justify-content:center;padding:16px}#lib.show,#store.show{display:flex}
 .panel{border-radius:24px;padding:18px;width:min(720px,100%);max-height:86vh;display:flex;flex-direction:column;gap:10px}
 .lh{display:flex;align-items:center;gap:10px}.lh h2{margin:0;font-size:20px}.lh .sp{flex:1}.lh .btn{padding:7px 14px;font-size:13px}
 #lq{padding:10px 14px;border-radius:14px;border:1px solid #fff6;background:#ffffff26;color:#fff;font:700 14px 'Nunito',sans-serif;outline:0;position:relative}#lq::placeholder{color:#fffa}
@@ -90,6 +90,14 @@ body.dark #tint{box-shadow:inset 0 0 0 100vmax #00081a66}
 #ltxt{font-size:15px;font-weight:800;opacity:.9}
 #off{position:fixed;inset:0;z-index:70;background:#000;display:none;align-items:center;justify-content:center;opacity:0;transition:opacity .45s}
 #off.show{display:flex}#off.in{opacity:1}#off img{height:96px}
+#br.srv #burl,#br.srv #bback,#br.srv #bfwd{display:none}#br.srv #bmenu{margin-right:auto}
+#sl2{overflow:auto;display:flex;flex-direction:column;gap:8px;min-height:120px;position:relative}#sn{margin:0;font-size:12px;opacity:.85}
+.srow{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:16px;background:#ffffff1c}
+.srow img{width:56px;height:56px;border-radius:12px;object-fit:cover;flex:0 0 auto}.srow .d{flex:1;min-width:0}.srow .d b{display:block;font-size:16px}.srow .d span{font-size:12px;opacity:.85}
+.srow .btn{padding:8px 16px;font-size:13px}
+.rx{margin-left:auto;border:0;background:#ffffff26;color:#fff;border-radius:8px;padding:2px 9px;cursor:pointer;font-size:13px}
+.slot.locked img{filter:grayscale(1) brightness(.9);opacity:.6}.slot.locked{opacity:.85}
+.slot .lk{display:none;position:absolute;top:8px;left:10px;font-size:17px;z-index:2;text-shadow:0 1px 4px #000a}.slot.locked .lk{display:block}
 #modal{position:fixed;inset:0;z-index:50;background:#0007;display:none;align-items:center;justify-content:center;padding:16px}#modal.show{display:flex}
 .card{border-radius:22px;padding:22px;width:min(360px,100%);display:flex;flex-direction:column;gap:10px}
 .card h2{margin:0;font-size:18px}.card p{margin:0;font-size:12px;opacity:.8}
@@ -110,20 +118,31 @@ body.dark #tint{box-shadow:inset 0 0 0 100vmax #00081a66}
 <div id="br"><div class="tb glass"><button id="bmenu" title="Back to menu">☰</button><button id="bback">◀</button><button id="bfwd">▶</button><button id="brl">⟳</button><input id="burl" placeholder="Search or enter address" autocomplete="off" spellcheck="false"><button id="btab" title="Open in a new tab">↗</button><button id="bset" title="Proxy settings">⚙</button></div>
 <iframe id="bf" allow="fullscreen; autoplay; clipboard-write"></iframe><div id="bhome" class="glass"><h2>Browser</h2><p id="bp">Search or type an address above.</p><div id="bq"></div></div></div>
 <div id="modal"><div class="card glass" id="card"></div></div>
-<div id="lib"><div class="panel glass"><div class="lh"><h2>My Games</h2><span id="lc"></span><span class="sp"></span><button class="btn glass" id="lpick">📁 Choose folder / USB</button><button class="btn glass" id="lx">✕</button></div>
+<div id="lib"><div class="panel glass"><div class="lh"><h2>My Games</h2><span id="lc"></span><span class="sp"></span><button class="btn glass" id="lfile">＋ Add files</button><button class="btn glass" id="lpick">📁 Choose folder / USB</button><button class="btn glass" id="lx">✕</button></div>
 <input id="lq" placeholder="Search…"><div id="ll"></div><p id="ln">Pick a folder on your USB (or anywhere). Games are detected automatically by file type. Use games you own.</p></div></div>
+<div id="store"><div class="panel glass"><div class="lh"><h2>Narrow Store</h2><span class="sp"></span><button class="btn glass" id="sx">✕</button></div><div id="sl2"></div><p id="sn"></p></div></div>
+<input type="file" id="fin2" multiple style="display:none">
 <input type="file" id="fin" webkitdirectory multiple style="display:none">
 <audio id="a1" src="assets/music1.mp3" preload="auto"></audio><audio id="a2" src="assets/music2.mp3" preload="auto"></audio><audio id="a3" src="assets/music3.mp3" preload="auto"></audio><audio id="mn" src="assets/menu.mp3" preload="auto"></audio>
 <audio id="ck" src="assets/click.mp3" preload="auto"></audio><audio id="sl" src="assets/select.mp3" preload="auto"></audio>
 <script>
 const $=id=>document.getElementById(id);
-const GAMES=[
- {name:'Browser',type:'browser',img:'assets/google-slot.png',banner:'assets/google-slot.png',bscale:.8},
- {name:'My Games',type:'rom',img:'assets/roms-slot.svg',banner:'assets/roms-banner.svg'},
- {name:'Eaglercraft',img:'assets/eagler-slot.png',url:'game/eaglercraft.html',banner:'assets/banner.webp'},
- {name:'2048',img:'assets/2048-slot.png',url:'game/2048.html',banner:'assets/2048-banner.svg'},
- {name:'Sandboxels',type:'link',img:'assets/sandboxels-banner.webp',fit:'contain',url:'https://sandboxels.r74n.com/',banner:'assets/sandboxels-slot.png'}];
-const N=8;let sel=0,musicOn=true,busy=false,inGame=false,sess=null,vol=.4,li=0;
+const CAT=[
+ {id:'browser',def:1,name:'Browser',type:'browser',img:'assets/google-slot.png',banner:'assets/google-slot.png',bscale:.8},
+ {id:'mygames',def:1,name:'My Games',type:'rom',needsAcc:1,img:'assets/usb-slot.svg',banner:'assets/roms-banner.svg'},
+ {id:'store',def:1,name:'Narrow Store',type:'store',needsAcc:1,img:'assets/store-slot.svg',banner:'assets/store-banner.svg'},
+ {id:'eagler',def:1,name:'Eaglercraft',img:'assets/eagler-slot.png',url:'game/eaglercraft.html',banner:'assets/banner.webp'},
+ {id:'2048',def:1,name:'2048',img:'assets/2048-slot.png',url:'game/2048.html',banner:'assets/2048-banner.svg'},
+ {id:'chess',def:1,name:'Chess',img:'assets/chess-slot.webp',url:'game/chess.html',banner:'assets/chess-banner.png',bfx:'brightness(0) invert(1) drop-shadow(0 2px 6px #0008)'},
+ {id:'sandboxels',def:1,name:'Sandboxels',type:'link',img:'assets/sandboxels-banner.webp',url:'https://sandboxels.r74n.com/',banner:'assets/sandboxels-slot.png'},
+ {id:'paperio2',store:1,name:'Paper.io 2',type:'link',desc:'Claim territory by drawing loops. Opens the official game in a new tab.',img:'assets/paper-slot.jpg',url:'https://www.crazygames.com/game/paper-io-2',banner:'assets/paper-banner.png',bscale:1.9},
+ {id:'subway',store:1,name:'Subway Surfers',type:'link',desc:'Endless runner. Opens the official web version in a new tab.',img:'assets/subway-slot.webp',url:'https://poki.com/en/g/subway-surfers',banner:'assets/subway-banner.svg'}];
+const GAMES=[];
+let N=8;let sel=0,musicOn=true,busy=false,inGame=false,sess=null,vol=.4,li=0;
+let acc=null;try{acc=JSON.parse(localStorage.getItem('narrow_acct')||'null')}catch(e){}
+function accKey(){return acc?acc.name.toLowerCase():'guest'}
+function getAdded(){if(!acc)return[];try{return JSON.parse(localStorage.getItem('narrow_lib_'+accKey())||'[]')}catch(e){return[]}}
+function setAdded(a){try{localStorage.setItem('narrow_lib_'+accKey(),JSON.stringify(a))}catch(e){}}
 document.addEventListener('pointermove',e=>{const g=e.target.closest&&e.target.closest('.glass');if(g){const r=g.getBoundingClientRect();g.style.setProperty('--mx',(e.clientX-r.left)+'px');g.style.setProperty('--my',(e.clientY-r.top)+'px')}});
 /* ---------- audio ---------- */
 const A=[$('a1'),$('a2'),$('a3')];const setVol=v=>{vol=v;A.forEach(t=>t.volume=v)};setVol(.4);
@@ -155,24 +174,26 @@ async function weather(){const forced=location.hash.slice(1);
 weather();setInterval(weather,15*60*1000);addEventListener('hashchange',weather);
 /* ---------- slots ---------- */
 const row=$('row'),hold={t:0,fired:false};
-for(let i=0;i<N;i++){const g=GAMES[i],s=document.createElement('div');s.className='slot glass'+(g?' has':'')+(g&&g.type==='link'?' lnk':'');
+function buildRow(){row.innerHTML='';for(let i=0;i<N;i++){const g=GAMES[i],s=document.createElement('div');s.className='slot glass'+(g?' has':'')+(g&&g.type==='link'?' lnk':'')+(g&&g.needsAcc&&!acc?' locked':'');
  const im=new Image();im.src=g?g.img:'assets/narrow.png';im.alt=g?g.name:'';if(!g)im.className='ghost';if(g&&g.fit)Object.assign(im.style,{objectFit:g.fit,width:'90%',height:'46%',boxShadow:'none',borderRadius:'0'});s.appendChild(im);const lb=document.createElement('span');lb.className='lb';lb.textContent=g?g.name:'Empty';s.appendChild(lb);
+ if(g&&g.needsAcc){const lk=document.createElement('span');lk.className='lk';lk.textContent='🔒';s.appendChild(lk)}
  s.onclick=()=>{if(hold.fired){hold.fired=false;return}if(busy)return;if(i===sel&&GAMES[i])launch();else pick(i)};
  if(g&&g.type==='rom'){s.onpointerdown=()=>{hold.fired=false;s.classList.add('holding');hold.t=setTimeout(()=>{hold.fired=true;s.classList.remove('holding');pickSource()},650)};
   ['onpointerup','onpointerleave','onpointercancel'].forEach(k=>s[k]=()=>{clearTimeout(hold.t);s.classList.remove('holding')})}
- row.appendChild(s)}
-function ui(){const g=GAMES[sel];$('nm').textContent=g?g.name+(sess&&sess.i===sel?' (in progress'+(sess.rom?': '+sess.rom:'')+')':g.type==='rom'?' — hold click to choose a folder/USB':''):'Empty slot';$('play').disabled=!g;$('play').textContent=g&&g.type==='link'?'↗ Open':g&&g.type==='browser'?'🌐 Open':g&&g.type==='rom'&&!(sess&&sess.i===sel)?'▤ Library':sess&&sess.i===sel?'▶ Resume':'▶ Play';
- const bi=$('bimg');bi.style.opacity=0;setTimeout(()=>{bi.src=g?g.banner:'assets/narrow.png';bi.style.transform='scale('+((g&&g.bscale)||1)+')';bi.style.opacity=1},200);$('quit').classList.toggle('show',!!sess);[...row.children].forEach((c,k)=>{c.classList.toggle('sel',k===sel);c.classList.toggle('live',!!sess&&sess.i===k)});paused()}
+ row.appendChild(s)}if(sel>=N)sel=0;ui()}
+function rebuildGames(){const add=getAdded();GAMES.length=0;CAT.filter(g=>g.def).forEach(g=>GAMES.push(g));add.forEach(id=>{const g=CAT.find(x=>x.id===id&&!x.def);if(g)GAMES.push(g)});N=Math.max(8,GAMES.length+1);buildRow()}
+function ui(){const g=GAMES[sel];$('nm').textContent=g?g.name+(sess&&sess.i===sel?' (in progress'+(sess.rom?': '+sess.rom:'')+')':g.needsAcc&&!acc?' — account required':g.type==='rom'?' — hold click to choose a folder/USB':''):'Empty slot';$('play').disabled=!g;$('play').textContent=g&&g.type==='link'?'↗ Open':g&&g.type==='browser'?'🌐 Open':g&&g.type==='store'?'🛍 Open Store':g&&g.type==='rom'&&!(sess&&sess.i===sel)?'▤ Library':sess&&sess.i===sel?'▶ Resume':'▶ Play';
+ const bi=$('bimg');bi.style.opacity=0;setTimeout(()=>{bi.src=g?g.banner:'assets/narrow.png';bi.style.transform='scale('+((g&&g.bscale)||1)+')';bi.style.filter=(g&&g.bfx)||'';bi.style.opacity=1},200);$('quit').classList.toggle('show',!!sess);[...row.children].forEach((c,k)=>{c.classList.toggle('sel',k===sel);c.classList.toggle('live',!!sess&&sess.i===k)});paused()}
 function paused(){const pz=!!sess&&!inGame;$('ban').classList.toggle('paused',pz);if(!pz)return;const gm=GAMES[sess.i];$('ptitle').textContent=gm.name+(sess.rom?' — '+sess.rom:'')+' · paused';const src=sess.freeze||gm.img,fz=$('freeze');if(fz.dataset.k!==src){fz.dataset.k=src;fz.src=src}}
 function pick(i,quiet){if(i<0||i>=N)return;if(i!==sel&&!quiet)snd('ck');sel=i;ui();row.children[sel].scrollIntoView({inline:'center',block:'nearest',behavior:'smooth'})}
-pick(0,true);
+rebuildGames();pick(0,true);
 addEventListener('keydown',e=>{if(busy||inGame||brOpen||$('modal').classList.contains('show')||!$('boot').classList.contains('hide'))return;
  if(e.key==='ArrowRight')pick(sel+1);else if(e.key==='ArrowLeft')pick(sel-1);else if(e.key==='Enter'&&GAMES[sel])launch()});
 $('play').onclick=()=>{if(!busy&&GAMES[sel])launch()};
 /* ---------- launch / pause / resume ---------- */
 function runLoader(ms,label,ready){const L=$('loader'),fl=$('lfill');$('ltxt').textContent=label;fl.classList.remove('go');void fl.offsetWidth;fl.style.setProperty('--ms',ms+'ms');fl.classList.add('go');L.classList.add('show');const t0=performance.now();
  return new Promise(res=>{(function chk(){const t=performance.now()-t0;if(t>=ms&&(!ready||ready()||t>ms+15000)){L.classList.remove('show');res()}else setTimeout(chk,100)})()})}
-function launch(){const g0=GAMES[sel];if(g0.type==='browser'){openBrowser();return}if(g0.type==='rom'&&!(sess&&sess.i===sel)){openLib();return}busy=true;const i=sel,g=GAMES[i];snd('sl');row.children[i].classList.add('spin');
+function launch(){const g0=GAMES[sel];if(g0.type==='browser'){openBrowser();return}if(g0.type==='store'){if(!acc){needAcc('Create an account to use the Narrow Store.');return}openStore();return}if(g0.type==='rom'&&!(sess&&sess.i===sel)){if(!acc){needAcc('Create an account to use My Games.');return}openLib();return}busy=true;const i=sel,g=GAMES[i];snd('sl');row.children[i].classList.add('spin');
  if(g.type==='link'){setTimeout(()=>{window.open(g.url,'_blank','noopener');},900);setTimeout(()=>{row.children[i].classList.remove('spin');busy=false},1500);return}
  fade(0,1200,stopMusic);setTimeout(()=>$('black').classList.add('on'),1100);
  setTimeout(()=>{const gm=$('game');gm.classList.add('show');inGame=true;$('tab').style.display=g.type==='embed'?'':'none';
@@ -203,69 +224,144 @@ function hook(w){['keydown','keyup'].forEach(t=>{w.addEventListener(t,key,true);
 /* ---------- ROM library (folder/USB picker + EmulatorJS) ---------- */
 const SYS={nes:['nes','NES'],fds:['nes','NES'],smc:['snes','SNES'],sfc:['snes','SNES'],gb:['gb','Game Boy'],gbc:['gb','GB Color'],gba:['gba','GBA'],n64:['n64','N64'],z64:['n64','N64'],v64:['n64','N64'],nds:['nds','DS'],md:['segaMD','Genesis'],gen:['segaMD','Genesis'],smd:['segaMD','Genesis'],sms:['segaMS','Master Sys'],gg:['segaGG','Game Gear'],a26:['atari2600','Atari 2600'],pce:['pce','PC Engine']};
 let roms=[],rootH=null,libLoaded=false,needPerm=false;
-const romIdx=GAMES.findIndex(g=>g.type==='rom');
+const romIdx=CAT.filter(g=>g.def).findIndex(g=>g.type==='rom');
+let imported=[];
 const idb=()=>new Promise((res,rej)=>{const r=indexedDB.open('narrow',1);r.onupgradeneeded=()=>r.result.createObjectStore('kv');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)});
 async function kvGet(k){try{const d=await idb();return await new Promise(r=>{const q=d.transaction('kv').objectStore('kv').get(k);q.onsuccess=()=>r(q.result);q.onerror=()=>r(null)})}catch(e){return null}}
-async function kvSet(k,v){try{const d=await idb();d.transaction('kv','readwrite').objectStore('kv').put(v,k)}catch(e){}}
+async function kvSet(k,v){try{const d=await idb();await new Promise((res,rej)=>{const t=d.transaction('kv','readwrite');t.objectStore('kv').put(v,k);t.oncomplete=res;t.onerror=()=>rej(t.error);t.onabort=()=>rej(t.error)});return true}catch(e){return false}}
+async function kvDel(k){try{const d=await idb();d.transaction('kv','readwrite').objectStore('kv').delete(k)}catch(e){}}
 const clean=n=>n.replace(/\.[^.]+$/,'').replace(/_/g,' ').replace(/\s*[\(\[][^\)\]]*[\)\]]/g,'').trim()||n;
-async function walk(h,depth){if(depth>4||roms.length>3000)return;for await(const [n,e] of h.entries()){if(n[0]==='.'||n==='System Volume Information'||n==='$RECYCLE.BIN')continue;
- if(e.kind==='directory')await walk(e,depth+1);else{const x=n.split('.').pop().toLowerCase(),s=SYS[x];if(s)roms.push({name:clean(n),core:s[0],sys:s[1],h:e})}}}
+const MIME={html:'text/html;charset=utf-8',htm:'text/html;charset=utf-8',js:'text/javascript;charset=utf-8',mjs:'text/javascript;charset=utf-8',css:'text/css;charset=utf-8',json:'application/json',wasm:'application/wasm',png:'image/png',jpg:'image/jpeg',jpeg:'image/jpeg',gif:'image/gif',svg:'image/svg+xml',webp:'image/webp',mp3:'audio/mpeg',ogg:'audio/ogg',wav:'audio/wav',mp4:'video/mp4',webm:'video/webm',txt:'text/plain',xml:'application/xml',woff:'font/woff',woff2:'font/woff2',ttf:'font/ttf'};
+const mime=p=>MIME[p.split('.').pop().toLowerCase()]||'application/octet-stream';
+const kindOf=x=>{if(SYS[x])return{kind:'rom',core:SYS[x][0],sys:SYS[x][1]};if(x==='swf')return{kind:'swf',sys:'Flash'};if(x==='html'||x==='htm')return{kind:'html',sys:'Web'};if(x==='zip')return{kind:'zip',sys:'ZIP'};return null};
+const HELP="Nothing here yet. Use ＋ Add files for single games, or 📁 Choose folder / USB to scan one. Works with: single .html games (like your Eaglercraft file), folders or .zip files that contain an index.html, .swf Flash games, and console games for NES, SNES, Game Boy/Color/Advance, N64, DS, Genesis, Master System, Game Gear, Atari 2600 and PC Engine (zipped too). Use games you own or that are free to share.";
+async function loadImported(){const m=(await kvGet('files:'+accKey()))||[];imported=m.map(x=>({...x,fid:x.id}))}
+async function walk(h,depth){if(depth>4||roms.length>3000)return;const subs=[],files=[];let idx=false;
+ for await(const [n,e] of h.entries()){if(n[0]==='.'||n==='System Volume Information'||n==='$RECYCLE.BIN')continue;if(e.kind==='directory')subs.push([n,e]);else{files.push([n,e]);if(/^index\.html?$/i.test(n))idx=true}}
+ if(idx){roms.push({name:clean(h.name||'Web game'),kind:'dir',sys:'Web',dh:h});return}
+ for(const [n,e] of files){const t=kindOf(n.split('.').pop().toLowerCase());if(t)roms.push({name:clean(n),fn:n,kind:t.kind,core:t.core,sys:t.sys,h:e})}
+ for(const [n,e] of subs)await walk(e,depth+1)}
 async function rescan(){roms=[];$('ln').textContent='Scanning…';try{await walk(rootH,0)}catch(e){}roms.sort((a,b)=>a.name.localeCompare(b.name));needPerm=false}
-async function pickSource(){if(window.showDirectoryPicker){try{rootH=await showDirectoryPicker({mode:'read'});kvSet('root',rootH);libLoaded=true;await rescan();openLib()}catch(e){}}else $('fin').click()}
-$('fin').onchange=e=>{roms=[...e.target.files].filter(f=>SYS[f.name.split('.').pop().toLowerCase()]).map(f=>{const s=SYS[f.name.split('.').pop().toLowerCase()];return{name:clean(f.name),core:s[0],sys:s[1],file:f}}).sort((a,b)=>a.name.localeCompare(b.name));libLoaded=true;openLib()};
-async function openLib(){$('lib').classList.add('show');if(!libLoaded){libLoaded=true;const h=await kvGet('root');if(h){rootH=h;try{if(await h.queryPermission({mode:'read'})==='granted')await rescan();else needPerm=true}catch(e){needPerm=true}}}renderLib()}
+async function pickSource(){if(!acc){needAcc('Create an account to use My Games.');return}if(window.showDirectoryPicker){try{rootH=await showDirectoryPicker({mode:'read'});kvSet('root',rootH);libLoaded=true;await rescan();openLib()}catch(e){}}else $('fin').click()}
+$('fin').onchange=e=>{const fl=[...e.target.files];roms=[];const dirs=fl.filter(f=>/^index\.html?$/i.test(f.name)).map(f=>f.webkitRelativePath.slice(0,-f.name.length));
+ dirs.forEach(d=>roms.push({name:clean(d.replace(/\/$/,'').split('/').pop()||'Web game'),kind:'dir',sys:'Web',prefix:d,files:fl.filter(f=>f.webkitRelativePath.startsWith(d))}));
+ fl.forEach(f=>{if(dirs.some(d=>f.webkitRelativePath.startsWith(d)))return;const t=kindOf(f.name.split('.').pop().toLowerCase());if(t)roms.push({name:clean(f.name),fn:f.name,kind:t.kind,core:t.core,sys:t.sys,file:f})});
+ roms.sort((a,b)=>a.name.localeCompare(b.name));libLoaded=true;openLib()};
+async function addFiles(fl){const k='files:'+accKey();const meta=(await kvGet(k))||[];let bad=0,fail=0;
+ for(const f of fl){const t=kindOf(f.name.split('.').pop().toLowerCase());if(!t){bad++;continue}const id=Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+  if(!(await kvSet('file:'+id,f))){fail++;continue}meta.push({id,name:clean(f.name),fn:f.name,kind:t.kind,core:t.core,sys:t.sys})}
+ await kvSet(k,meta);await loadImported();renderLib();
+ if(bad||fail)alert((fail?fail+' file(s) could not be stored (browser storage full?). ':'')+(bad?bad+' file(s) skipped: unsupported type.':''))}
+$('fin2').onchange=async e=>{await addFiles([...e.target.files]);e.target.value=''};
+$('lfile').onclick=()=>{if(!acc){needAcc('Create an account to use My Games.');return}$('fin2').click()};
+async function openLib(){$('lib').classList.add('show');await loadImported();if(!libLoaded){libLoaded=true;const h=await kvGet('root');if(h){rootH=h;try{if(await h.queryPermission({mode:'read'})==='granted')await rescan();else needPerm=true}catch(e){needPerm=true}}}renderLib()}
 function closeLib(){$('lib').classList.remove('show')}
-function renderLib(){const q=$('lq').value.toLowerCase(),l=$('ll');l.innerHTML='';const v=roms.filter(r=>r.name.toLowerCase().includes(q));$('lc').textContent=roms.length?roms.length+' games':'';
- v.slice(0,400).forEach(r=>{const d=document.createElement('div');d.className='rom';d.innerHTML='<b></b><span></span>';d.firstChild.textContent=r.sys;d.lastChild.textContent=r.name;d.onclick=()=>playRom(r);l.appendChild(d)});
- $('ln').textContent=needPerm?'Reconnect to your saved folder to see your games.':roms.length?(v.length?'':'No matches.'):'No games found yet. Pick a folder on your USB (or anywhere). Games are detected automatically by file type. Use games you own.';
+function renderLib(){const q=$('lq').value.toLowerCase(),l=$('ll');l.innerHTML='';const all=roms.concat(imported).sort((a,b)=>a.name.localeCompare(b.name));const v=all.filter(r=>r.name.toLowerCase().includes(q));$('lc').textContent=all.length?all.length+' games':'';
+ v.slice(0,400).forEach(r=>{const d=document.createElement('div');d.className='rom';d.innerHTML='<b></b><span></span>';d.children[0].textContent=r.sys;d.children[1].textContent=r.name;d.onclick=()=>playRom(r);
+  if(r.fid){const x=document.createElement('button');x.className='rx';x.textContent='✕';x.title='Remove';x.onclick=async ev=>{ev.stopPropagation();await kvDel('file:'+r.fid);const k='files:'+accKey();await kvSet(k,((await kvGet(k))||[]).filter(m=>m.id!==r.fid));await loadImported();renderLib()};d.appendChild(x)}
+  l.appendChild(d)});
+ $('ln').textContent=needPerm?'Reconnect to your saved folder to see your games.':all.length?(v.length?'':'No matches.'):HELP;
  if(needPerm){const b=document.createElement('button');b.className='btn glass';b.textContent='Reconnect saved folder';b.onclick=async()=>{try{if(await rootH.requestPermission({mode:'read'})==='granted'){await rescan();renderLib()}}catch(e){}};l.appendChild(b)}}
 $('lq').oninput=renderLib;$('lpick').onclick=pickSource;$('lx').onclick=closeLib;
 addEventListener('keydown',e=>{if(e.key==='Escape'&&$('lib').classList.contains('show')){e.stopPropagation();closeLib()}},true);
+/* --- zip reader (stored + deflate) --- */
+async function unzip(blob){const buf=await blob.arrayBuffer(),dv=new DataView(buf),u8=new Uint8Array(buf);let e=-1;
+ for(let i=buf.byteLength-22;i>=Math.max(0,buf.byteLength-65557);i--){if(dv.getUint32(i,true)===0x06054b50){e=i;break}}
+ if(e<0)throw new Error('That is not a valid zip file.');
+ const n=dv.getUint16(e+10,true);let p=dv.getUint32(e+16,true);const out=[];
+ for(let k=0;k<n;k++){if(dv.getUint32(p,true)!==0x02014b50)break;
+  const m=dv.getUint16(p+10,true),cs=dv.getUint32(p+20,true),nl=dv.getUint16(p+28,true),xl=dv.getUint16(p+30,true),cl=dv.getUint16(p+32,true),off=dv.getUint32(p+42,true);
+  const name=new TextDecoder().decode(u8.subarray(p+46,p+46+nl));p+=46+nl+xl+cl;
+  if(name.endsWith('/')||name.startsWith('__MACOSX/'))continue;
+  const ds=off+30+dv.getUint16(off+26,true)+dv.getUint16(off+28,true),raw=u8.subarray(ds,ds+cs);let data;
+  if(m===0)data=new Blob([raw]);
+  else if(m===8)data=await new Response(new Blob([raw]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).blob();
+  else continue;
+  out.push({path:name,blob:data})}
+ return out}
+async function dirEntries(dh,base=''){const out=[];for await(const [n,e] of dh.entries()){if(e.kind==='directory')out.push(...await dirEntries(e,base+n+'/'));else out.push({path:base+n,blob:await e.getFile()})}return out}
+async function installWeb(ents,idx){if(!('serviceWorker' in navigator)||location.protocol==='file:')throw new Error('Web-game folders and zips need the console opened over http(s): localhost or your github.io site, not by double-clicking index.html.');
+ await navigator.serviceWorker.register('narrow-sw.js');await navigator.serviceWorker.ready;
+ await caches.delete('narrow-games');const c=await caches.open('narrow-games');
+ const id=Date.now().toString(36),base=new URL('__g/'+id+'/',location.href).href,pre=idx.includes('/')?idx.slice(0,idx.lastIndexOf('/')+1):'';
+ const enc=p=>p.split('/').map(encodeURIComponent).join('/');
+ for(const e of ents){if(!e.path.startsWith(pre))continue;const rel=e.path.slice(pre.length);await c.put(base+enc(rel),new Response(e.blob,{headers:{'Content-Type':mime(rel)}}))}
+ return{src:base+enc(idx.slice(pre.length))}}
+const emuDoc=(core,url,name)=>`<!DOCTYPE html><html><body style="margin:0;background:#000;height:100vh"><div id="game" style="width:100%;height:100%"></div><script>EJS_player='#game';EJS_core=${JSON.stringify(core)};EJS_gameUrl=${JSON.stringify(url)};EJS_gameName=${JSON.stringify(name)};EJS_pathtodata='https://cdn.emulatorjs.org/stable/data/';EJS_startOnLoaded=true;<\/script><script src="https://cdn.emulatorjs.org/stable/data/loader.js"><\/script></body></html>`;
+const swfDoc=url=>`<!DOCTYPE html><html><body style="margin:0;background:#000;height:100vh;overflow:hidden"><script src="https://unpkg.com/@ruffle-rs/ruffle"><\/script><script>window.addEventListener('load',()=>{const p=window.RufflePlayer.newest().createPlayer();p.style.width='100vw';p.style.height='100vh';document.body.appendChild(p);p.load(${JSON.stringify(url)})})<\/script></body></html>`;
+async function getBlob(r){const b=r.file||(r.h&&await r.h.getFile())||(r.fid&&await kvGet('file:'+r.fid));if(!b)throw new Error('That game file could not be read.');return b}
+const romUrl=(b,fn)=>URL.createObjectURL(b)+'#'+encodeURIComponent(fn);
+async function prepare(r){const k=r.kind||'rom';
+ if(k==='rom')return{srcdoc:emuDoc(r.core,romUrl(await getBlob(r),r.fn||r.name),r.name)};
+ if(k==='swf')return{srcdoc:swfDoc(URL.createObjectURL(await getBlob(r)))};
+ if(k==='html')return{src:URL.createObjectURL(new Blob([await getBlob(r)],{type:'text/html'}))};
+ if(k==='dir'){const ents=r.dh?await dirEntries(r.dh):r.files.map(f=>({path:f.webkitRelativePath.slice(r.prefix.length),blob:f}));const idx=ents.map(e=>e.path).find(p=>/^index\.html?$/i.test(p));if(!idx)throw new Error('That folder has no index.html.');return installWeb(ents,idx)}
+ if(k==='zip'){const ents=await unzip(await getBlob(r));
+  const idxs=ents.map(e=>e.path).filter(p=>/(^|\/)index\.html?$/i.test(p)).sort((a,b)=>a.length-b.length);if(idxs.length)return installWeb(ents,idxs[0]);
+  const rom=ents.find(e=>SYS[e.path.split('.').pop().toLowerCase()]);if(rom){const fn=rom.path.split('/').pop();return{srcdoc:emuDoc(SYS[fn.split('.').pop().toLowerCase()][0],romUrl(rom.blob,fn),clean(fn))}}
+  const sw=ents.find(e=>/\.swf$/i.test(e.path));if(sw)return{srcdoc:swfDoc(URL.createObjectURL(sw.blob))};
+  const ht=ents.find(e=>/\.html?$/i.test(e.path));if(ht)return{src:URL.createObjectURL(new Blob([ht.blob],{type:'text/html'}))};
+  throw new Error('Nothing playable in that zip (it needs an index.html, a console ROM or a .swf).')}
+ throw new Error('Unsupported game type.')}
 async function playRom(r){if(sess&&!confirm('This closes the game in progress. Continue?'))return;closeLib();
+ const L=$('loader');$('ltxt').textContent='Preparing '+r.name+'…';$('lfill').classList.remove('go');L.classList.add('show');
+ let spec;try{spec=await prepare(r)}catch(e){L.classList.remove('show');alert(e&&e.message?e.message:'Could not open that game.');ui();return}
+ L.classList.remove('show');
  if(sess){clearInterval(sess.ht);sess.f.remove();sess=null}
- let url;try{url=URL.createObjectURL(r.file||await r.h.getFile())}catch(e){alert('Could not read that file.');return}
  busy=true;snd('sl');row.children[romIdx].classList.add('spin');fade(0,1200,stopMusic);setTimeout(()=>$('black').classList.add('on'),1100);
  setTimeout(()=>{const gm=$('game');gm.classList.add('show');inGame=true;$('tab').style.display='none';
   const f=document.createElement('iframe');f.allow='fullscreen; autoplay; gamepad; pointer-lock; keyboard-map';
-  f.srcdoc=`<!DOCTYPE html><html><body style="margin:0;background:#000;height:100vh"><div id="game" style="width:100%;height:100%"></div><script>EJS_player='#game';EJS_core=${JSON.stringify(r.core)};EJS_gameUrl=${JSON.stringify(url)};EJS_gameName=${JSON.stringify(r.name)};EJS_pathtodata='https://cdn.emulatorjs.org/stable/data/';EJS_startOnLoaded=true;<\/script><script src="https://cdn.emulatorjs.org/stable/data/loader.js"><\/script></body></html>`;
+  if(spec.srcdoc)f.srcdoc=spec.srcdoc;else f.src=spec.src;
   f.onload=()=>{if(sess&&sess.f===f)sess.ready=true;f.focus()};gm.appendChild(f);sess={i:romIdx,f,rom:r.name};
   sess.ht=setInterval(()=>{try{hook(f.contentWindow)}catch(e){}},250);
   runLoader(4000,'Loading '+r.name+'…',()=>sess&&sess.ready).then(()=>{f.classList.add('on');f.focus();toast({})})},1800)}
+/* ---------- Narrow Store ---------- */
+function openStore(){$('store').classList.add('show');renderStore()}
+function closeStore(){$('store').classList.remove('show')}
+function renderStore(){const l=$('sl2');l.innerHTML='';$('sn').textContent='Signed in as '+(acc?acc.name:'?')+'. Games you add show up on your home row.';const add=getAdded();
+ CAT.filter(g=>g.store).forEach(g=>{const d=document.createElement('div');d.className='srow';const im=new Image();im.src=g.img;d.appendChild(im);
+  const t=document.createElement('div');t.className='d';t.innerHTML='<b></b><span></span>';t.children[0].textContent=g.name;t.children[1].textContent=g.desc||'';d.appendChild(t);
+  const has=add.includes(g.id),b=document.createElement('button');b.className='btn glass';b.textContent=has?'Added ✓ · Remove':'＋ Add';
+  b.onclick=()=>{if(has&&sess){alert('Quit the game in progress before removing games.');return}const a=getAdded();setAdded(has?a.filter(x=>x!==g.id):a.concat(g.id));rebuildGames();renderStore()};
+  d.appendChild(b);l.appendChild(d)})}
+$('sx').onclick=closeStore;
+addEventListener('keydown',e=>{if(e.key==='Escape'&&$('store').classList.contains('show')){e.stopPropagation();closeStore()}},true);
 /* ---------- Browser (through your Cloudflare Worker) ---------- */
-const PROXY_DEFAULT={url:'',key:''}; /* or hard-code your Worker address + key here */
+const PROXY_DEFAULT={url:'',key:'',server:''}; /* or hard-code your Worker address + key here */
 let px=Object.assign({},PROXY_DEFAULT);try{Object.assign(px,JSON.parse(localStorage.getItem('narrow_proxy')||'{}'))}catch(e){}
 let brOpen=false,hist=[],hi=-1,cur='',pend=false;
 const pxUrl=t=>{const u=new URL(t);return px.url.replace(/\/+$/,'')+'/'+px.key+'/'+u.protocol.slice(0,-1)+'/'+u.host+u.pathname+u.search+u.hash};
 function norm(v){v=v.trim();if(!v)return'';if(/^https?:\/\//i.test(v))return v;if(/^[^\s]+\.[a-z]{2,}([\/?#].*)?$/i.test(v))return'https://'+v;return'https://html.duckduckgo.com/html/?q='+encodeURIComponent(v)}
 function navBtns(){$('bback').disabled=hi<=0;$('bfwd').disabled=hi>=hist.length-1}
-function go(t,push=true){if(!t)return;if(!px.url||!px.key){proxySetup();return}let h;try{h=new URL(t).href}catch(e){return}
+function go(t,push=true){if(!t||px.server)return;if(!px.url||!px.key){proxySetup();return}let h;try{h=new URL(t).href}catch(e){return}
  if(push){hist=hist.slice(0,hi+1);hist.push(h);hi=hist.length-1}cur=h;pend=true;$('burl').value=h;$('bhome').style.display='none';$('bf').src=pxUrl(h);navBtns()}
 addEventListener('message',e=>{const d=e.data;if(!d||!d.narrowNav||e.source!==$('bf').contentWindow)return;let u=d.narrowNav;try{u=new URL(u).href}catch(x){}
  if(pend){hist[hi]=u;pend=false}else if(u!==hist[hi]){hist=hist.slice(0,hi+1);hist.push(u);hi=hist.length-1}cur=u;$('burl').value=u;navBtns()});
 $('burl').addEventListener('keydown',e=>{if(e.key==='Enter')go(norm($('burl').value))});
 $('burl').addEventListener('focus',e=>e.target.select());
 $('bback').onclick=()=>{if(hi>0){hi--;go(hist[hi],false)}};$('bfwd').onclick=()=>{if(hi<hist.length-1){hi++;go(hist[hi],false)}};
-$('brl').onclick=()=>{if(cur)go(cur,false)};$('btab').onclick=()=>{if(cur)window.open(cur,'_blank','noopener')};$('bset').onclick=proxySetup;
+$('brl').onclick=()=>{if(px.server){const f=$('bf');f.src=f.src;return}if(cur)go(cur,false)};$('btab').onclick=()=>{if(px.server){window.open(px.server,'_blank','noopener');return}if(cur)window.open(cur,'_blank','noopener')};$('bset').onclick=proxySetup;
 [['Wikipedia','https://en.wikipedia.org/'],['DuckDuckGo','https://html.duckduckgo.com/html/'],['Internet Archive','https://archive.org/'],['Hacker News','https://news.ycombinator.com/']].forEach(([n,u])=>{const b=document.createElement('button');b.textContent=n;b.onclick=()=>go(u);$('bq').appendChild(b)});
-function proxySetup(){$('card').innerHTML=`<h2>Proxy settings</h2><p>Paste your Cloudflare Worker address and the access key from worker.js. Saved on this device only.</p><input id="pu" placeholder="https://yourname.workers.dev" value="${px.url||''}"><input id="pk" placeholder="Access key" value="${px.key||''}"><div id="err"></div><div class="row"><button class="btn glass" id="cx">Close</button><button class="btn glass" id="sv2">Save</button></div>`;$('modal').classList.add('show');
+function proxySetup(){$('card').innerHTML=`<h2>Proxy settings</h2><p>A: your full proxy server (Scramjet/Ultraviolet) for heavy sites. B: your Cloudflare Worker plus its key. Saved on this device only.</p><input id="ps" placeholder="Full proxy server: https://your-server" value="${px.server||''}"><input id="pu" placeholder="Worker: https://yourname.workers.dev" value="${px.url||''}"><input id="pk" placeholder="Worker access key" value="${px.key||''}"><div id="err"></div><div class="row"><button class="btn glass" id="cx">Close</button><button class="btn glass" id="sv2">Save</button></div>`;$('modal').classList.add('show');
  $('cx').onclick=()=>$('modal').classList.remove('show');
- $('sv2').onclick=()=>{const u=$('pu').value.trim().replace(/\/+$/,''),k=$('pk').value.trim();if(!/^https:\/\//i.test(u)||!/^[A-Za-z0-9]+$/.test(k)){$('err').textContent='Enter the https:// Worker address and a letters/numbers key.';return}
-  px={url:u,key:k};try{localStorage.setItem('narrow_proxy',JSON.stringify(px))}catch(e){}$('modal').classList.remove('show');if(cur)go(cur,false)}}
+ $('sv2').onclick=()=>{const sv=$('ps').value.trim().replace(/\/+$/,''),u=$('pu').value.trim().replace(/\/+$/,''),k=$('pk').value.trim();const okS=/^https:\/\//i.test(sv),okW=/^https:\/\//i.test(u)&&/^[A-Za-z0-9]+$/.test(k);if(!okS&&!okW){$('err').textContent='Enter an https:// server address, or a Worker address plus key.';return}
+  px={server:okS?sv:'',url:okW?u:'',key:okW?k:''};try{localStorage.setItem('narrow_proxy',JSON.stringify(px))}catch(e){}$('modal').classList.remove('show');brMode();if(!px.server&&cur)go(cur,false)}}
+function brMode(){const on=!!px.server;$('br').classList.toggle('srv',on);if(on){$('bhome').style.display='none';const f=$('bf');if(f.dataset.s!==px.server){f.dataset.s=px.server;f.src=px.server}}else if(!hist.length){$('bhome').style.display=''}}
 function openBrowser(){busy=true;snd('sl');row.children[sel].classList.add('spin');fade(0,1200,stopMusic);setTimeout(()=>$('black').classList.add('on'),900);
- setTimeout(()=>{$('br').classList.add('show');brOpen=true;navBtns();if(!hist.length){$('bhome').style.display='';if(!px.url)$('bp').textContent='First, add your proxy address with the ⚙ button.'}if(!px.url)setTimeout(proxySetup,400);else if(!hist.length)$('burl').focus()},1700)}
+ setTimeout(()=>{$('br').classList.add('show');brOpen=true;brMode();navBtns();const none=!px.url&&!px.server;if(!px.server&&!hist.length){$('bhome').style.display='';if(none)$('bp').textContent='First, add your proxy address with the ⚙ button.'}if(none)setTimeout(proxySetup,400);else if(!px.server&&!hist.length)$('burl').focus()},1700)}
 function closeBrowser(){brOpen=false;$('black').classList.add('on');setTimeout(()=>{$('br').classList.remove('show');[...row.children].forEach(c=>c.classList.remove('spin'));$('black').classList.remove('on');setVol(0);play();fade(.4,1500);busy=false},750)}
 $('bmenu').onclick=closeBrowser;
 $('poff').onclick=()=>{if(busy||inGame||brOpen)return;busy=true;snd('ck');stopMusic();$('modal').classList.remove('show');const o=$('off');o.classList.add('show');requestAnimationFrame(()=>requestAnimationFrame(()=>o.classList.add('in')));setTimeout(()=>{try{window.close()}catch(e){}setTimeout(()=>location.replace('about:blank'),250)},1600)};
 /* ---------- misc ---------- */
 function clock(){const d=new Date();$('clk').textContent=d.toLocaleDateString('en',{month:'numeric',day:'numeric',weekday:'short'})+'  '+d.toLocaleTimeString('en',{hour:'2-digit',minute:'2-digit',hour12:false})}clock();setInterval(clock,20000);
-let acc=null;try{acc=JSON.parse(localStorage.getItem('narrow_acct')||'null')}catch(e){}
 function who(){$('who').textContent=acc?acc.name:'Guest'}who();
 async function sha(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
-function setup(){$('card').innerHTML=`<h2>${acc?'Your Account':'Set up your account'}</h2><p>Saved on this device only for now.</p><input id="n" placeholder="Username" value="${acc?acc.name:''}"><input id="em" type="email" placeholder="Email" value="${acc?acc.email:''}"><input id="pw" type="password" placeholder="Password"><div id="err"></div><div class="row"><button class="btn glass" id="cx">${acc?'Close':'Skip'}</button><button class="btn glass" id="sv2">Save</button></div>`;$('modal').classList.add('show');
+function setup(msg){$('card').innerHTML=`<h2>${acc?'Your Account':'Set up your account'}</h2><p>${msg||'Saved on this device only for now.'}</p><input id="n" placeholder="Username" value="${acc?acc.name:''}"><input id="em" type="email" placeholder="Email" value="${acc?acc.email:''}"><input id="pw" type="password" placeholder="Password"><div id="err"></div><div class="row"><button class="btn glass" id="cx">${acc?'Close':'Skip'}</button><button class="btn glass" id="sv2">Save</button></div>`;$('modal').classList.add('show');
  $('cx').onclick=()=>$('modal').classList.remove('show');
  $('sv2').onclick=async()=>{const n=$('n').value.trim(),e=$('em').value.trim(),p=$('pw').value;if(!n||!/^\S+@\S+\.\S+$/.test(e)||p.length<6){$('err').textContent='Enter a name, valid email and 6+ char password.';return}
- acc={name:n,email:e,h:await sha(p)};try{localStorage.setItem('narrow_acct',JSON.stringify(acc))}catch(x){}who();$('modal').classList.remove('show')}}
-$('acct').onclick=setup;$('who').onclick=setup;
+ acc={name:n,email:e,h:await sha(p)};try{localStorage.setItem('narrow_acct',JSON.stringify(acc))}catch(x){}who();$('modal').classList.remove('show');rebuildGames()}}
+function needAcc(m){setup(m)}
+$('acct').onclick=()=>setup();$('who').onclick=()=>setup();
 /* ---------- boot: 1s black -> logo video -> fade into home ---------- */
 const sv=$('sv');let done=false;
 function fin(){if(done)return;done=true;sv.classList.remove('on');setTimeout(()=>{$('boot').classList.add('hide');play();if(!acc)setTimeout(setup,1400)},700)}
